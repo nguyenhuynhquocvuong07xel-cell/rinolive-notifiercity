@@ -1,7 +1,15 @@
---================ RINOLIVE FINAL | BRAINROT ONLY =================
+--================ RINOLIVE FINAL | BRAINROT ONLY | AUTO RELOAD =================
 repeat task.wait() until game:IsLoaded()
 task.wait(3)
 
+--================ AUTO LOAD LẠI SAU KHI HOP =================
+if queue_on_teleport then
+	queue_on_teleport([[
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/nguyenhuynhquocvuong07xel-cell/rinolive-notifiercity/main/notifier.lua", true))()
+	]])
+end
+
+--================ SERVICES =================
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
@@ -11,38 +19,32 @@ local LP = Players.LocalPlayer
 local WEBHOOK = "https://discord.com/api/webhooks/1449391153064575148/rIt_v0jashDSj6Y4DpfZ_ZyROYmTW7WY6Wok9KmXvJQHiUtciFrYaWWnQUdjo0ePJ1lj"
 local MIN_MONEY = 10_000_000
 local SCAN_DELAY = 4
-local HOP_DELAY = 22
+local HOP_DELAY = 20 -- hop nhanh cho 24/24
 --========================================
 
 local requestFunc = request or http_request or (syn and syn.request)
 local sentServer = {}
 
---================ BLACKLIST (IM LẶNG) =================
+--================ BLACKLIST =================
 local BLACKLIST = {
-	["radioactive slap"] = true,
 	["radioactive"] = true,
-	["slap"] = true
+	["slap"] = true,
+	["radioactive slap"] = true
 }
 
--------------------------------------------------
--- FORMAT MONEY
--------------------------------------------------
+--================ FORMAT MONEY =================
 local function fmt(n)
 	if n >= 1e9 then return string.format("%.1fB", n/1e9) end
 	if n >= 1e6 then return string.format("%.1fM", n/1e6) end
 	return tostring(n)
 end
 
--------------------------------------------------
--- PLAYER COUNT (CHUẨN TRONG SERVER)
--------------------------------------------------
+--================ PLAYER COUNT =================
 local function getPlayerCount()
 	return #Players:GetPlayers(), Players.MaxPlayers
 end
 
--------------------------------------------------
--- LẤY TÊN PET THẬT (FIX WORKSPACE / ANIMAL)
--------------------------------------------------
+--================ LẤY TÊN PET CHUẨN =================
 local function getPetName(label)
 	local gui =
 		label:FindFirstAncestorWhichIsA("BillboardGui")
@@ -67,10 +69,10 @@ local function getPetName(label)
 	return nil
 end
 
--------------------------------------------------
--- SCAN BRAINROT
--------------------------------------------------
+--================ SCAN SERVER =================
 local function scanServer()
+	if sentServer[game.JobId] then return end
+
 	local pets = {}
 
 	for _, v in ipairs(workspace:GetDescendants()) do
@@ -82,14 +84,8 @@ local function scanServer()
 					if t:find("B") then num *= 1e9 else num *= 1e6 end
 					if num >= MIN_MONEY and num < 1e12 then
 						local name = getPetName(v)
-						if name then
-							local lname = name:lower()
-							if not BLACKLIST[lname] then
-								table.insert(pets, {
-									name = name,
-									money = num
-								})
-							end
+						if name and not BLACKLIST[name:lower()] then
+							table.insert(pets, {name = name, money = num})
 						end
 					end
 				end
@@ -98,21 +94,13 @@ local function scanServer()
 	end
 
 	if #pets == 0 then return end
-	if sentServer[game.JobId] then return end
 	sentServer[game.JobId] = true
 
 	local cur, max = getPlayerCount()
 
-	print(string.format(
-		"[RINOLIVE] FOUND %d BRAINROT | PLAYERS %d/%d",
-		#pets, cur, max
-	))
-
-	-------------------------------------------------
-	-- DISCORD MESSAGE
-	-------------------------------------------------
-	local desc = "👥 *Players:* "..cur.."/"..max.."\n\n"
-	desc ..="🏷️ *Name* | 💰 **Money/s**\n"
+	--================ DISCORD =================
+	local desc = "👥 Players: "..cur.."/"..max.."\n\n"
+	desc ..="🏷️ Name | 💰 Money/s\n"
 
 	for _, p in ipairs(pets) do
 		desc ..= p.name.." — $"..fmt(p.money).."/s\n"
@@ -126,29 +114,29 @@ local function scanServer()
 	"game:GetService('TeleportService'):TeleportToPlaceInstance("
 	..game.PlaceId..", '"..game.JobId.."', game.Players.LocalPlayer)"
 
-	requestFunc({
-		Url = WEBHOOK,
-		Method = "POST",
-		Headers = {["Content-Type"]="application/json"},
-		Body = HttpService:JSONEncode({
-			embeds = {{
-				title = "Brainrot Notify | RINOLIVE VUONG",
-				color = 0x2ecc71,
-				description = desc,
-				fields = {
-					{name="🆔 Job ID (PC)", value=""..game.JobId.."", inline=false},
-					{name="🌐 JOIN SERVER HERE", value="[JOIN]("..joinLink..")", inline=false},
-					{name="📜 Join Script", value="```lua\n"..joinScript.."\n```", inline=false}
-				},
-				footer = {text="RINOLIVE | "..os.date("%H:%M")}
-			}}
+	pcall(function()
+		requestFunc({
+			Url = WEBHOOK,
+			Method = "POST",
+			Headers = {["Content-Type"]="application/json"},
+			Body = HttpService:JSONEncode({
+				embeds = {{
+					title = "Brainrot Notify | RINOLIVE",
+					color = 0x2ecc71,
+					description = desc,
+					fields = {
+						{name="🆔 Job ID", value=game.JobId, inline=false},
+						{name="🌐 JOIN", value="[JOIN]("..joinLink..")", inline=false},
+						{name="📜 Script", value="```lua\n"..joinScript.."\n```", inline=false}
+					},
+					footer = {text="RINOLIVE | "..os.date("%H:%M")}
+				}}
+			})
 		})
-	})
+	end)
 end
 
--------------------------------------------------
--- AUTO SCAN LOOP
--------------------------------------------------
+--================ LOOP SCAN =================
 task.spawn(function()
 	while true do
 		pcall(scanServer)
@@ -156,9 +144,7 @@ task.spawn(function()
 	end
 end)
 
--------------------------------------------------
--- RANDOM HOP (KHÔNG SERVER LIST – KHÔNG LỖI)
--------------------------------------------------
+--================ AUTO HOP =================
 TeleportService.TeleportInitFailed:Connect(function()
 	task.wait(5)
 	TeleportService:Teleport(game.PlaceId, LP)
@@ -171,4 +157,4 @@ task.spawn(function()
 	end
 end)
 
-print("✅ RINOLIVE FINAL | BRAINROT ONLY | SILENT BLACKLIST | STABLE 24/7")
+print("✅ RINOLIVE | AUTO RELOAD | 24/24 | READY")
