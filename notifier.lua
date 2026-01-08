@@ -11,7 +11,7 @@ local LP = Players.LocalPlayer
 local WEBHOOK = "https://discord.com/api/webhooks/1449391153064575148/rIt_v0jashDSj6Y4DpfZ_ZyROYmTW7WY6Wok9KmXvJQHiUtciFrYaWWnQUdjo0ePJ1lj"
 local MIN_MONEY = 10_000_000
 local SCAN_DELAY = 4
-local HOP_DELAY = 25 -- đổi 20 nếu muốn hop nhanh hơn
+local HOP_DELAY =  20 -- đổi 20 nếu muốn hop nhanh hơn
 --========================================
 
 -- XENO / DELTA request
