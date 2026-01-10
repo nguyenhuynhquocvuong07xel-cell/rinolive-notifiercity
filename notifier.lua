@@ -1,3 +1,9 @@
+-- RINOLIVE DELTA / XENO SAFE GUARD
+if getgenv().__RinoNotifierStarted then
+	return
+end
+getgenv().__RinoNotifierStarted = true
+
 --================ RINOLIVE FINAL | BRAINROT ONLY | XENO 24/24 =================
 repeat task.wait() until game:IsLoaded()
 task.wait(3)
