@@ -34,8 +34,8 @@ local BLACKLIST = {
 	["radioactive slap"] = true,
 	["radioactive"] = true,
 	["slap"] = true,
-	["Radioactive Airstrike"] = true,
-	["Airstrike"] = true,
+	["radioactive airstrike"] = true,
+	["airstrike"] = true,
 }
 
 -------------------------------------------------
