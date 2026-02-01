@@ -17,7 +17,7 @@ local LP = Players.LocalPlayer
 local WEBHOOK = "https://discord.com/api/webhooks/1449391153064575148/rIt_v0jashDSj6Y4DpfZ_ZyROYmTW7WY6Wok9KmXvJQHiUtciFrYaWWnQUdjo0ePJ1lj"
 local MIN_MONEY = 10_000_000
 local SCAN_DELAY = 4
-local HOP_DELAY =  20 -- đổi 20 nếu muốn hop nhanh hơn
+local HOP_DELAY =  22 -- đổi 20 nếu muốn hop nhanh hơn
 --========================================
 
 -- XENO / DELTA request
@@ -124,11 +124,18 @@ local function scanServer()
 	-------------------------------------------------
 	-- DISCORD FORMAT
 	-------------------------------------------------
-	local desc = "👥 Players: " .. cur .. "/" .. max .. "\n\n"
-	desc ..= "🏷️ Name | 💰 Money/s\n"
+    local desc = "👥 Players: " .. cur .. "/" .. max .. "\n\n"
+    desc ..= "🏷️ Name  |  💰 Money/s\n"
 
-	for _, p in ipairs(pets) do
-		desc ..= p.name .. " — $" .. fmt(p.money) .. "/s\n"
+    for _, p in ipairs(pets) do
+
+    local icon = "💎"
+
+    if p.money >= 100_000_000 then
+        icon = "🔥"
+    end
+
+    desc ..= icon .. " " .. p.name .. " — $" .. fmt(p.money) .. "/s\n"
 	end
 
 	local joinLink =
@@ -146,12 +153,12 @@ local function scanServer()
 			Headers = { ["Content-Type"] = "application/json" },
 			Body = HttpService:JSONEncode({
 				embeds = {{
-					title = "Brainrot Notify | RINOLIVE",
-					color = 0x2ecc71,
+					title = " City Notifier | RINOLIVE",
+					color = 0xf1c40f,
 					description = desc,
 					fields = {
 						{ name = "🆔 Job ID", value = game.JobId, inline = false },
-						{ name = "🌐 Join Server", value = "[JOIN](" .. joinLink .. ")", inline = false },
+						{ name = "🌐 Click Join Sever ", value = "[JOIN TO SEVER](" .. joinLink .. ")", inline = false },
 						{ name = "📜 Join Script", value = "```lua\n" .. joinScript .. "\n```", inline = false }
 					},
 					footer = { text = "RINOLIVE | " .. os.date("%H:%M") }
