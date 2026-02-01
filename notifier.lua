@@ -69,7 +69,6 @@ local function getPetName(label)
 			local t = v.Text
 			if t
 				and #t > 2
-				and not t:find("%d")
 				and not t:find("/s")
 				and not t:lower():find("workspace")
 				and not t:lower():find("animal")
