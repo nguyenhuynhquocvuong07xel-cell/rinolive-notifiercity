@@ -4,7 +4,6 @@ if getgenv().__RinoNotifierStarted then
 end
 getgenv().__RinoNotifierStarted = true
 
---================ RINOLIVE FINAL | BRAINROT ONLY | XENO 24/24 =================
 repeat task.wait() until game:IsLoaded()
 task.wait(3)
 
@@ -15,12 +14,14 @@ local LP = Players.LocalPlayer
 
 --================ CONFIG =================
 local WEBHOOK = "https://discord.com/api/webhooks/1449391153064575148/rIt_v0jashDSj6Y4DpfZ_ZyROYmTW7WY6Wok9KmXvJQHiUtciFrYaWWnQUdjo0ePJ1lj"
-local MIN_MONEY = 10_000_000
+
+local HIGHLIGHT_WEBHOOK = "https://discord.com/api/webhooks/1467699262149103823/rJ4ChLVXev2dB6hqyyoLtoI-sUB9XqQOBb498vkIV6spbLZu5I4PwznsPnpueaT-mIgF"
+
+local MIN_MONEY = 10000000
 local SCAN_DELAY = 4
-local HOP_DELAY =  22 -- đổi 20 nếu muốn hop nhanh hơn
+local HOP_DELAY = 22
 --========================================
 
--- XENO / DELTA request
 local requestFunc =
 	request or
 	http_request or
@@ -28,8 +29,8 @@ local requestFunc =
 	(fluxus and fluxus.request)
 
 local sentServer = {}
+local sentHighlight = {}
 
---================ BLACKLIST (IM LẶNG) =================
 local BLACKLIST = {
 	["radioactive slap"] = true,
 	["radioactive"] = true,
@@ -55,7 +56,7 @@ local function getPlayerCount()
 end
 
 -------------------------------------------------
--- LẤY TÊN PET THẬT (CHỐNG ANIMAL / WORKSPACE)
+-- Láº¤Y TĂN PET THáº¬T
 -------------------------------------------------
 local function getPetName(label)
 	local gui =
@@ -81,7 +82,50 @@ local function getPetName(label)
 end
 
 -------------------------------------------------
--- SCAN BRAINROT
+-- HIGHLIGHT Äáº¸P (GIá»NG áº¢NH)
+-------------------------------------------------
+local function sendPrettyHighlight(pets)
+
+	if sentHighlight[game.JobId] then
+		return
+	end
+
+	sentHighlight[game.JobId] = true
+
+	local cur, max = getPlayerCount()
+
+	local lines = ""
+	for i, p in ipairs(pets) do
+		lines = lines .. i .. ". " .. p.name .. " â€“ $" .. fmt(p.money) .. "/s\n"
+	end
+
+	local data = {
+		username = "yeu truc ",
+		embeds = {{
+			title = "City 3TN Highlights",
+			color = 3066993,
+            description =
+				"**" .. pets[1].name .. " ($" .. fmt(pets[1].money) .. "/s)**\n\n" ..
+				lines .. "\n" ..
+				"đŸ‘¥ Players " .. cur .. "/" .. max,
+			footer = {
+				text = "Made by RINOLIVE"
+			}
+		}}
+	}
+
+	if requestFunc then
+		requestFunc({
+			Url = HIGHLIGHT_WEBHOOK,
+			Method = "POST",
+			Headers = { ["Content-Type"] = "application/json" },
+			Body = HttpService:JSONEncode(data)
+		})
+	end
+end
+
+-------------------------------------------------
+-- SCAN SERVER
 -------------------------------------------------
 local function scanServer()
 	local pets = {}
@@ -116,26 +160,31 @@ local function scanServer()
 	end
 
 	if #pets == 0 then return end
+
+	-------------------------------------------------
+	-- Gá»¬I HIGHLIGHT Má»I
+	-------------------------------------------------
+	sendPrettyHighlight(pets)
+
+	-------------------------------------------------
+	-- NOTIFIER Gá»C (GIá»® NGUYĂN)
+	-------------------------------------------------
 	if sentServer[game.JobId] then return end
 	sentServer[game.JobId] = true
 
 	local cur, max = getPlayerCount()
 
-	-------------------------------------------------
-	-- DISCORD FORMAT
-	-------------------------------------------------
-    local desc = "👥 Players: " .. cur .. "/" .. max .. "\n\n"
-    desc ..= "🏷️ Name  |  💰 Money/s\n"
+	local desc = "đŸ‘¥ Players: " .. cur .. "/" .. max .. "\n\n"
+	desc = desc .. "đŸ·ï¸ Name  |  đŸ’° Money/s\n"
 
-    for _, p in ipairs(pets) do
+	for _, p in ipairs(pets) do
+		local icon = "đŸ’"
 
-    local icon = "💎"
+		if p.money >= 100_000_000 then
+			icon = "đŸ”¥"
+		end
 
-    if p.money >= 100_000_000 then
-        icon = "🔥"
-    end
-
-    desc ..= icon .. " " .. p.name .. " — $" .. fmt(p.money) .. "/s\n"
+		desc = desc .. icon .. " " .. p.name .. " â€” $" .. fmt(p.money) .. "/s\n"
 	end
 
 	local joinLink =
@@ -157,9 +206,9 @@ local function scanServer()
 					color = 0xf1c40f,
 					description = desc,
 					fields = {
-						{ name = "🆔 Job ID", value = game.JobId, inline = false },
-						{ name = "🌐 Click Join Sever ", value = "[JOIN TO SEVER](" .. joinLink .. ")", inline = false },
-						{ name = "📜 Join Script", value = "```lua\n" .. joinScript .. "\n```", inline = false }
+						{ name = "đŸ†” Job ID", value = game.JobId, inline = false },
+						{ name = "đŸŒ Click Join Sever ", value = "[[JOIN TO SEVER]](" .. joinLink .. ")", inline = false },
+						{ name = "đŸ“œ Join Script", value = "```lua\n" .. joinScript .. "\n```", inline = false }
 					},
 					footer = { text = "RINOLIVE | " .. os.date("%H:%M") }
 				}}
@@ -169,7 +218,7 @@ local function scanServer()
 end
 
 -------------------------------------------------
--- AUTO SCAN LOOP
+-- LOOP SCAN
 -------------------------------------------------
 task.spawn(function()
 	while true do
@@ -193,16 +242,13 @@ task.spawn(function()
 	end
 end)
 
--------------------------------------------------
--- 🔥 FIX XENO: AUTO LOAD LẠI SAU MỖI TELEPORT (24/24)
--------------------------------------------------
 if queue_on_teleport then
 	queue_on_teleport([[
 		loadstring(game:HttpGet(
-			"https://raw.githubusercontent.com/nguyenhuynhquocvuong07xel-cell/rinolive-notifiercity/main/notifier.lua",
+			"https://raw.githubusercontent.com/nguyenhuynhquocvuong07xel-cell/rinolive-notifierain/notifier.lua",
 			true
 		))()
 	]])
 end
 
-print("✅ RINOLIVE FINAL | XENO FIX | CHẠY 24/24 | KHÔNG CHẾT NGẦM")
+print("âœ… RINOLIVE FINAL | HIGHLIGHT FIXED + NOTIFIER OK")
