@@ -96,7 +96,7 @@ local function sendPrettyHighlight(pets)
 
 	local lines = ""
 	for i, p in ipairs(pets) do
-		lines = lines .. i .. ". " .. p.name .. " â€“ $" .. fmt(p.money) .. "/s\n"
+		lines = lines .. i .. ". " .. p.name .. " - $" .. fmt(p.money) .. "/s\n"
 	end
 
 	local data = {
@@ -184,7 +184,7 @@ local function scanServer()
 			icon = "🔥"
 		end
 
-		desc = desc .. icon .. " " .. p.name .. " â€” $" .. fmt(p.money) .. "/s\n"
+		desc = desc .. icon .. " " .. p.name .. " - $" .. fmt(p.money) .. "/s\n"
 	end
 
 	local joinLink =
