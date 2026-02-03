@@ -107,7 +107,7 @@ local function sendPrettyHighlight(pets)
             description =
 				"**" .. pets[1].name .. " ($" .. fmt(pets[1].money) .. "/s)**\n\n" ..
 				lines .. "\n" ..
-				"đŸ‘¥ Players " .. cur .. "/" .. max,
+				"👥 Players" .. cur .. "/" .. max,
 			footer = {
 				text = "Made by RINOLIVE"
 			}
@@ -174,14 +174,14 @@ local function scanServer()
 
 	local cur, max = getPlayerCount()
 
-	local desc = "đŸ‘¥ Players: " .. cur .. "/" .. max .. "\n\n"
-	desc = desc .. "đŸ·ï¸ Name  |  đŸ’° Money/s\n"
+	local desc = "👥 Players: " .. cur .. "/" .. max .. "\n\n"
+	desc = desc .. "🏷️ Name   |   💰 Money/s\n"
 
 	for _, p in ipairs(pets) do
-		local icon = "đŸ’"
+		local icon = "💎"
 
 		if p.money >= 100_000_000 then
-			icon = "đŸ”¥"
+			icon = "🔥"
 		end
 
 		desc = desc .. icon .. " " .. p.name .. " â€” $" .. fmt(p.money) .. "/s\n"
@@ -206,9 +206,9 @@ local function scanServer()
 					color = 0xf1c40f,
 					description = desc,
 					fields = {
-						{ name = "đŸ†” Job ID", value = game.JobId, inline = false },
-						{ name = "đŸŒ Click Join Sever ", value = "[[JOIN TO SEVER]](" .. joinLink .. ")", inline = false },
-						{ name = "đŸ“œ Join Script", value = "```lua\n" .. joinScript .. "\n```", inline = false }
+						{ name = "🆔 Job ID", value = game.JobId, inline = false },
+						{ name = "🌐 Click Join Sever ", value = "[[JOIN TO SEVER]](" .. joinLink .. ")", inline = false },
+						{ name = "📜 Join Script", value = "```lua\n" .. joinScript .. "\n```", inline = false }
 					},
 					footer = { text = "RINOLIVE | " .. os.date("%H:%M") }
 				}}
@@ -251,4 +251,4 @@ if queue_on_teleport then
 	]])
 end
 
-print("âœ… RINOLIVE FINAL | HIGHLIGHT FIXED + NOTIFIER OK")
+print("🌃 RINOLIVE FINAL | HIGHLIGHT FIXED + NOTIFIER OK")
