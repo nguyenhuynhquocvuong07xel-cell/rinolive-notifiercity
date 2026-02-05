@@ -162,17 +162,17 @@ local function scanServer()
 	if #pets == 0 then return end
 
 	-------------------------------------------------
-	-- Gá»¬I HIGHLIGHT Má»I
+	if sentServer[game.JobId] then
+        return 
+    end
+    sentServer[game.JobId] = true
 	-------------------------------------------------
 	sendPrettyHighlight(pets)
 
 	-------------------------------------------------
 	-- NOTIFIER Gá»C (GIá»® NGUYĂN)
 	-------------------------------------------------
-	if sentServer[game.JobId] then return end
-	sentServer[game.JobId] = true
-
-	local cur, max = getPlayerCount()
+    local cur, max = getPlayerCount()
 
 	local desc = "👥 Players: " .. cur .. "/" .. max .. "\n\n"
 	desc = desc .. "🏷️ Name   |   💰 Money/s\n"
